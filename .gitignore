@@ -19,3 +19,8 @@
 
 # Go workspace file
 go.work
+tmp_data
+./tmp_data/
+./tmp_data
+WiredTiger.turtle
+.idea/

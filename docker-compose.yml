@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  
+  mongodb:
+    image: mongo:latest
+    container_name: db_mongo
+    # restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: supersenha
+    volumes: 
+     - ./tmp_data/mongodb_data:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - user-bridge
+  dbpostgre:
+    image: postgres:15.4-alpine3.18
+    # restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersenha
+      POSTGRES_DB: "pix_db_dev"
+    volumes:
+      - ./migrate/0001_create_db_pgsql.up.sql:/docker-entrypoint-initdb.d/db.sql
+      - ./tmp_data/postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - user-bridge
+
+  
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.12-management-alpine
+    # restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=supersenha
+    networks:
+      - user-bridge
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./tmp_data/rabbitmq_data:/var/lib/rabbitmq
+
+networks:
+  user-bridge:
+    name: user-bridge
